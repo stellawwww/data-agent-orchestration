@@ -1,0 +1,22 @@
+# secrets: API keys, Snowflake credentials
+.env
+.env.*
+!.env.example
+*.p8
+
+# python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# notebooks
+.ipynb_checkpoints/
+
+# TruLens local trace store (exported results in runs/ are committed instead)
+*.sqlite
+*.sqlite-journal
+
+# macOS
+.DS_Store
+**/.DS_Store
