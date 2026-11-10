@@ -17,7 +17,7 @@
 #
 # Scope values: a list, or "all". Dates are inclusive. `end: null` = permanent.
 
-replay_window: {start: 2025-10-06, end: 2026-01-31}
+replay_window: {start: 2025-10-06, end: 2026-02-01}
 
 scenarios:
 
@@ -85,7 +85,7 @@ scenarios:
     kind: planted
     category: traffic_quality
     difficulty: hard
-    window: {start: 2026-01-12, end: 2026-01-31}
+    window: {start: 2026-01-12, end: 2026-02-01}
     scope: {market: [NYC], specialty: [Therapy], platform: all}
     # Campaign traffic converts at about 65% of normal: blended CVR = (1 + 0.40 x 0.65) / 1.40 = 0.90
     effect: {type: demand, searches: 1.40, booking_cvr: 0.90}
@@ -146,10 +146,10 @@ scenarios:
     signature: >
       Real CDC flu activity peaked the week of 2025-12-21 at 13.6% of outpatient visits in
       HHS Region 2 (NYC) and 11.3% in Georgia (Atlanta), vs 9.2% and 8.8% at last season's
-      late-January peaks. Urgent care searches peak about 6 weeks earlier than last season and
-      rise further above their early-November level (NYC 2.21x vs 1.67x; Atlanta 1.93x vs 1.65x).
+      late-January peaks. Urgent care searches peak about 4-6 weeks earlier than last season and
+      rise further above their early-November level (NYC 2.04x vs 1.64x; Atlanta 1.98x vs 1.72x).
       Primary care rises moderately. Supply does not follow, so availability falls
-      (Atlanta urgent care roughly 0.85 in early November to 0.58 at the peak).
+      (Atlanta urgent care roughly 0.85 in early November to 0.51 in the week of Dec 22).
     deciding_evidence: >
       Timing and size match flu_activity for each market's region; the surge is larger than
       last season's; other specialties don't show it.
@@ -164,13 +164,13 @@ scenarios:
     kind: real_world
     category: external_demand
     difficulty: medium
-    window: {start: 2025-12-01, end: 2026-01-31}
+    window: {start: 2025-12-01, end: 2026-02-01}
     scope: {market: [Houston, Chicago], specialty: [Urgent care, Primary care], platform: all}
     effect: {type: none}
     signature: >
       Real flu peaked about 5-6 weeks earlier than last season but lower (Texas 8.3% vs 11.3%;
       Illinois 4.4% vs 5.6%). Urgent care surges less above its early-November level than last
-      season (Houston 1.61x vs 1.89x; Chicago 1.80x vs 2.07x). Houston urgent care is above last
+      season (Houston 1.53x vs 1.88x; Chicago 1.93x vs 2.15x). Houston urgent care is above last
       year in mid-December (about 1.2x) and below it in late January (about 0.84x).
     deciding_evidence: >
       Compare whole seasons, not single weeks; the flu curve shifted earlier and is lower.
@@ -204,7 +204,7 @@ scenarios:
     kind: expected
     category: expected_seasonality
     difficulty: medium
-    window: {start: 2026-01-03, end: 2026-01-31}
+    window: {start: 2026-01-03, end: 2026-02-01}
     scope: {market: all, specialty: [Primary care, Therapy], platform: all}
     effect: {type: none}
     correct_conclusion: >

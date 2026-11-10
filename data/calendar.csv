@@ -730,3 +730,4 @@ date,day_of_week,is_holiday,holiday_name,is_holiday_week
 2026-01-29,Thursday,False,,False
 2026-01-30,Friday,False,,False
 2026-01-31,Saturday,False,,False
+2026-02-01,Sunday,False,,False

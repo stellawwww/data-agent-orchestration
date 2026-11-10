@@ -18,7 +18,7 @@ Table and column definitions: [`data/DATA_DICTIONARY.md`](data/DATA_DICTIONARY.m
 
 ![Real CDC flu activity vs synthetic urgent care demand](docs/story_check.png)
 
-Synthetic urgent care demand follows each market's real flu curve (weekly correlation 0.90 to 0.95). The 2025–26 season peaked about six weeks earlier than the one before: more severe in NYC and Atlanta, milder in Chicago, Houston and Phoenix.
+Synthetic urgent care demand follows each market's real flu curve (weekly correlation 0.89 to 0.95). The 2025–26 season peaked about six weeks earlier than the one before: more severe in NYC and Atlanta, milder in Chicago, Houston and Phoenix.
 
 ### Rebuild the data
 

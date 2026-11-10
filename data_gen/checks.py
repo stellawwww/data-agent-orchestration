@@ -111,9 +111,9 @@ def main() -> None:
         ok &= e1 / e0 < 0.95 and earlier >= 3
         lines.append(f"{m} surge {e1:.2f}x vs {e0:.2f}x last season, peak {earlier} weeks earlier ({w1.date()})")
     hou = f[(f.market == "Houston") & (f.specialty == "Urgent care")]
-    dec, late_jan = yoy(hou, "2025-12-14", "2025-12-27"), yoy(hou, "2026-01-18", "2026-01-31")
+    dec, late_jan = yoy(hou, "2025-12-14", "2025-12-27"), yoy(hou, "2026-01-18", "2026-02-01")
     ok &= dec > 1.1 and late_jan < 1.0
-    lines.append(f"Houston YoY Dec 14-27 {dec:.2f}x, Jan 18-31 {late_jan:.2f}x")
+    lines.append(f"Houston YoY Dec 14-27 {dec:.2f}x, Jan 18-Feb 1 {late_jan:.2f}x")
     check(ok, "Houston, Chicago: earlier but milder", "; ".join(lines))
 
     # 7. Chicago dermatology supply loss -------------------------------------
@@ -145,12 +145,12 @@ def main() -> None:
 
     # 9. NYC therapy campaign on top of January season -----------------------
     th = f[f.specialty == "Therapy"]
-    nyc = yoy(th[th.market == "NYC"], "2026-01-12", "2026-01-31")
-    rest = yoy(th[th.market != "NYC"], "2026-01-12", "2026-01-31")
-    nyc_cvr = rates(between(th[th.market == "NYC"], "2026-01-12", "2026-01-31"))[1]
+    nyc = yoy(th[th.market == "NYC"], "2026-01-12", "2026-02-01")
+    rest = yoy(th[th.market != "NYC"], "2026-01-12", "2026-02-01")
+    nyc_cvr = rates(between(th[th.market == "NYC"], "2026-01-12", "2026-02-01"))[1]
     nyc_cvr0 = rates(between(th[th.market == "NYC"], "2025-12-08", "2026-01-04"))[1]
     check(nyc / rest > 1.25, "NYC therapy stands out from other markets",
-          f"therapy searches Jan 12-31 YoY: NYC {nyc:.2f}x vs other markets {rest:.2f}x; "
+          f"therapy searches Jan 12-Feb 1 YoY: NYC {nyc:.2f}x vs other markets {rest:.2f}x; "
           f"NYC therapy CVR {nyc_cvr0:.3f} -> {nyc_cvr:.3f}")
 
     # 10. noise trap: big-looking drop that is inside normal variation -------
@@ -197,7 +197,7 @@ def plot(f, flu, mk) -> None:
         ax2.tick_params(labelsize=8, colors="#BF3A2B")
         for label, d in events.items():
             ax.axvline(pd.Timestamp(d), color="#8a8f98", lw=0.8, ls=":")
-        ax.axvspan(pd.Timestamp("2025-10-06"), pd.Timestamp("2026-01-31"), color="#E7ECFB", zorder=0)
+        ax.axvspan(pd.Timestamp("2025-10-06"), pd.Timestamp("2026-02-01"), color="#E7ECFB", zorder=0)
         if m == markets[0]:
             h1, l1 = ax.get_legend_handles_labels()
             h2, l2 = ax2.get_legend_handles_labels()

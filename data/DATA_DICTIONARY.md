@@ -4,7 +4,7 @@ What an analyst at this (fictional) healthcare booking marketplace would know ab
 Patients search for a specialty in a market, see providers with open slots, open a provider
 profile, and book. Providers publish appointment slots.
 
-Coverage: 2024-02-01 to 2026-01-31, daily. 5 markets, 6 specialties, 3 platforms.
+Coverage: 2024-02-01 to 2026-02-01, daily. 5 markets, 6 specialties, 3 platforms.
 
 ## daily_funnel
 One row per date × market × specialty × platform. Source: app event tracking.
