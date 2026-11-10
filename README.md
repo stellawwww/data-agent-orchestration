@@ -23,6 +23,7 @@ Synthetic urgent care demand follows each market's real flu curve (weekly correl
 ### Rebuild the data
 
 ```bash
+conda create -n dao python=3.12 && conda activate dao
 pip install -r requirements.txt
 python data_gen/fetch_flu.py   # download CDC flu data (snapshot already in data/)
 python data_gen/generate.py    # write the synthetic tables to data/

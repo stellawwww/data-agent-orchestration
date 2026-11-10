@@ -1,5 +1,19 @@
+# Python 3.12 (conda create -n dao python=3.12)
+# Versions tested on 2026-11-10. Lower bounds are the tested majors.
+
 # data generation
-numpy>=1.24
-pandas>=2.0
+numpy>=2.5
+pandas>=3.1
 pyyaml>=6.0
 matplotlib>=3.5
+
+# agents
+anthropic>=2.7
+langgraph>=1.2
+duckdb>=2.0          # note: 2.0 relations have no fetchone(); use .fetchall()
+python-dotenv>=1.2
+
+# tracing and evals
+trulens>=2.16
+trulens-apps-langgraph>=2.16
+pytest>=8
