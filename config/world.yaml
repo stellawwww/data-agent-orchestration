@@ -1,0 +1,163 @@
+# World assumptions for the synthetic healthcare booking marketplace.
+# Everything here is an assumption about how patients and providers behave.
+# Agents never read this file; they only see the generated tables.
+#
+# Units: rates and shares are decimals (0.40 = 40%). Multipliers are relative to 1.0.
+
+seed: 20251109
+start_date: 2024-02-01
+end_date: 2026-01-31
+
+# ---------------------------------------------------------------- markets
+# size scales all demand and supply. flu_region is the CDC ILINet region whose
+# real weekly flu curve drives this market (NYC city data stops in Oct 2025,
+# so NYC uses HHS Region 2 = New York + New Jersey for the whole period).
+markets:
+  NYC:     {size: 1.6, flu_region: hhs2}
+  Chicago: {size: 1.0, flu_region: il}
+  Houston: {size: 0.9, flu_region: tx}
+  Phoenix: {size: 0.6, flu_region: az}
+  Atlanta: {size: 0.8, flu_region: ga}
+
+platforms: [iOS, Android, Web]
+
+# iOS share drifts up over the two years; Android is flat; Web takes the rest.
+platform_share:
+  iOS_start: 0.42
+  iOS_end: 0.46
+  Android: 0.18
+
+# ---------------------------------------------------------------- demand
+demand:
+  annual_growth: 0.12          # searches grow 12% a year
+  day_noise_sd: 0.06           # lognormal noise per cell-day
+  market_day_noise_sd: 0.03    # shared shock across a market's specialties
+
+# Per specialty:
+#   base_searches   daily searches, all platforms, size-1.0 market, neutral season
+#   flu_beta        sensitivity to flu: multiplier = 1 + beta * (flu_index - 1)
+#   flu_months      if set, flu effect only applies in these months
+#   dow             Mon..Sun multipliers (average 1.0)
+#   season          day-of-year bumps: 1 + sum(amp * gaussian(center, width_days))
+#   holiday_damping 1.0 = full holiday dip, 0.4 = only 40% of the dip
+#   click_mult, cvr_mult  adjustments to the platform click rate and booking CVR
+#   supply          slots_per_provider; supply_ratio = slots per search on a neutral weekday;
+#                   weekend = [Saturday, Sunday] share of providers open
+specialties:
+  Primary care:
+    base_searches: 900
+    flu_beta: 0.08
+    dow: [1.25, 1.15, 1.10, 1.05, 0.95, 0.70, 0.80]
+    season:
+      - {name: new year wellness and new plan year, center: 01-12, width: 12, amp: 0.25}
+      - {name: back-to-school physicals, center: 08-25, width: 15, amp: 0.10}
+      - {name: summer lull, center: 07-15, width: 25, amp: -0.08}
+    holiday_damping: 1.0
+    click_mult: 1.00
+    cvr_mult: 1.00
+    supply: {slots_per_provider: 10, supply_ratio: 0.350, weekend: [0.45, 0.25]}
+
+  Urgent care:
+    base_searches: 500
+    flu_beta: 0.25
+    dow: [1.10, 1.00, 0.95, 0.95, 1.00, 1.00, 1.00]
+    season:
+      - {name: summer lull, center: 07-01, width: 30, amp: -0.05}
+    holiday_damping: 0.4
+    click_mult: 1.12
+    cvr_mult: 1.25
+    supply: {slots_per_provider: 25, supply_ratio: 0.275, weekend: [0.90, 0.80]}
+
+  Flu shot:
+    base_searches: 60
+    flu_beta: 0.03
+    flu_months: [9, 10, 11]          # only early-season news moves flu shot demand
+    dow: [1.05, 1.00, 1.00, 1.00, 1.00, 1.00, 0.95]
+    season:
+      - {name: vaccination season, center: 10-10, width: 22, amp: 7.0}
+    holiday_damping: 1.0
+    click_mult: 1.05
+    cvr_mult: 1.30
+    supply: {slots_per_provider: 30, supply_ratio: 0.625, weekend: [0.80, 0.60], follows_season: 0.6}
+
+  Dermatology:
+    base_searches: 350
+    flu_beta: 0.0
+    dow: [1.25, 1.15, 1.10, 1.05, 0.95, 0.70, 0.80]
+    season:
+      - {name: spring and summer skin checks, center: 06-01, width: 45, amp: 0.20}
+      - {name: use benefits before year end, center: 12-12, width: 10, amp: 0.15}
+    holiday_damping: 1.0
+    click_mult: 1.00
+    cvr_mult: 0.90
+    supply: {slots_per_provider: 9, supply_ratio: 0.225, weekend: [0.35, 0.10]}
+
+  Dentist:
+    base_searches: 400
+    flu_beta: 0.0
+    dow: [1.25, 1.15, 1.10, 1.05, 0.95, 0.70, 0.80]
+    season:
+      - {name: use benefits before year end, center: 12-10, width: 10, amp: 0.20}
+      - {name: back-to-school checkups, center: 08-15, width: 12, amp: 0.10}
+    holiday_damping: 1.0
+    click_mult: 1.00
+    cvr_mult: 1.00
+    supply: {slots_per_provider: 8, supply_ratio: 0.325, weekend: [0.50, 0.10]}
+
+  Therapy:
+    base_searches: 450
+    flu_beta: 0.0
+    dow: [1.30, 1.15, 1.10, 1.05, 0.90, 0.70, 0.80]
+    season:
+      - {name: new year reset, center: 01-15, width: 15, amp: 0.25}
+      - {name: back to routine, center: 09-12, width: 15, amp: 0.12}
+    holiday_damping: 1.0
+    click_mult: 0.90
+    cvr_mult: 0.70
+    supply: {slots_per_provider: 6, supply_ratio: 0.300, weekend: [0.30, 0.20]}
+
+# Holiday multipliers on searches (before damping). Day after Jan 1 rebounds.
+holidays:
+  Thanksgiving: 0.45
+  Day after Thanksgiving: 0.75
+  Christmas Eve: 0.55
+  Christmas Day: 0.35
+  Day after Christmas: 0.80
+  New Year's Eve: 0.65
+  New Year's Day: 0.45
+  Day after New Year's: 1.15
+  Independence Day: 0.50
+  Memorial Day: 0.65
+  Labor Day: 0.65
+
+# ---------------------------------------------------------------- supply
+supply:
+  annual_growth: 0.12            # same as demand, so availability is stable year over year
+  slot_noise_sd: 0.03
+  # share of providers with open schedules on these days
+  holiday_open_share:
+    Thanksgiving: 0.30
+    Day after Thanksgiving: 0.60
+    Christmas Eve: 0.50
+    Christmas Day: 0.30
+    New Year's Eve: 0.50
+    New Year's Day: 0.30
+    Independence Day: 0.30
+    Memorial Day: 0.30
+    Labor Day: 0.30
+  urgent_care_holiday_damping: 0.8   # urgent care closes less: only 80% of the dip
+  year_end_vacation: {start: 12-22, end: 01-02, open_share: 0.75}   # other days in this window
+  flu_sickness: 0.01             # each +1 of flu_index removes 1% of provider capacity
+
+# availability_rate = 1 - exp(-k * slots_offered / searches)
+# supply_ratio above = slots offered per search on a neutral weekday. Only about 1 in 10
+# searches books, so a ratio of 0.35 leaves schedules roughly a third to half full.
+availability_k: 10
+
+# ---------------------------------------------------------------- funnel
+# click_rate  = profile_views / searches_with_availability
+# booking_cvr = bookings / profile_views
+funnel:
+  click_rate: {iOS: 0.40, Android: 0.36, Web: 0.33}
+  booking_cvr: {iOS: 0.30, Android: 0.26, Web: 0.32}
+  max_fill: 0.95                 # bookings can't exceed 95% of slots offered

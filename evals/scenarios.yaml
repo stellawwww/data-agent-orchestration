@@ -1,0 +1,218 @@
+# ANSWER KEY. Agents must never read this file.
+#
+# Two jobs:
+#   1. `effect` tells the generator what to plant in the data.
+#   2. Everything else is the ground truth the eval scores agent memos against.
+#
+# kind:
+#   planted     a company-internal event written into the data by the generator
+#   real_world  driven by real CDC flu data; not planted, but the truth is known
+#   expected    normal seasonality or holidays; the right answer is "no action"
+#   noise       inside normal variation; the right answer is "not significant"
+#   decoy       logged in change_log but has no effect; nothing should be blamed on it
+#
+# category (what the agent must name):
+#   supply | external_demand | product_change | traffic_quality |
+#   instrumentation | expected_seasonality | noise | no_effect
+#
+# Scope values: a list, or "all". Dates are inclusive. `end: null` = permanent.
+
+replay_window: {start: 2025-10-06, end: 2026-01-31}
+
+scenarios:
+
+  - id: chi_derm_supply_loss
+    kind: planted
+    category: supply
+    difficulty: easy
+    window: {start: 2025-11-10, end: null}
+    scope: {market: [Chicago], specialty: [Dermatology], platform: all}
+    effect: {type: supply, providers: 0.65}
+    signature: >
+      slots_offered and active_providers drop about 35% and stay down. Availability falls,
+      fill rate rises. Searches, click rate and booking CVR are flat. Bookings fall.
+    deciding_evidence: >
+      Searches unchanged while slots fall; only Chicago x Dermatology moves; all platforms equally.
+    correct_conclusion: >
+      Supply-side loss in one market-specialty (providers left the platform). Bookings are
+      capped by supply, not demand. Action: provider recruitment in Chicago dermatology.
+    wrong_answers:
+      - Dermatology demand fell
+      - Conversion or product problem
+
+  - id: web_redesign
+    kind: planted
+    category: product_change
+    difficulty: easy
+    window: {start: 2025-10-14, end: null}
+    scope: {market: all, specialty: all, platform: [Web]}
+    effect: {type: funnel, click_rate: 1.08, booking_cvr: 0.94}
+    change_log: {event_type: product_launch, description: "New search results page on web (larger provider cards, more profile links)"}
+    signature: >
+      Web click rate +8%, web booking CVR -6%, net web bookings about +1.5% (1.08 x 0.94 = 1.015).
+      iOS and Android unchanged.
+    deciding_evidence: >
+      The two funnel steps move in opposite directions on Web only, starting on the launch date.
+    correct_conclusion: >
+      The redesign moved patients into profiles but fewer of them book; net effect near zero.
+      Worth investigating the profile-to-booking step on web.
+    wrong_answers:
+      - Big win (looking at click rate only)
+      - Conversion crisis (looking at CVR only)
+
+  - id: ios_tracking_bug
+    kind: planted
+    category: instrumentation
+    difficulty: hard
+    window: {start: 2025-12-26, end: 2025-12-27}
+    scope: {market: all, specialty: all, platform: [iOS]}
+    effect: {type: tracking, recorded_bookings: 0.10}
+    signature: >
+      Recorded iOS bookings drop about 90% for two days. iOS searches and profile views are
+      normal. daily_supply.slots_booked (provider scheduling system) is normal.
+    deciding_evidence: >
+      Gap between sum(daily_funnel.bookings) and daily_supply.slots_booked, iOS only.
+      Happens during the real flu peak and Christmas week, so "holiday + flu" is a tempting wrong story.
+    correct_conclusion: >
+      Booking event tracking broke on iOS. Real bookings were normal. Exclude or correct these
+      two days in reporting and file a bug.
+    wrong_answers:
+      - Bookings fell because of the holiday
+      - Bookings fell because of the flu surge
+      - iOS app outage (searches and views were normal)
+
+  - id: nyc_therapy_campaign
+    kind: planted
+    category: traffic_quality
+    difficulty: hard
+    window: {start: 2026-01-12, end: 2026-01-31}
+    scope: {market: [NYC], specialty: [Therapy], platform: all}
+    # Campaign traffic converts at about 65% of normal: blended CVR = (1 + 0.40 x 0.65) / 1.40 = 0.90
+    effect: {type: demand, searches: 1.40, booking_cvr: 0.90}
+    change_log: {event_type: marketing, description: "Paid social campaign for therapy, NYC"}
+    signature: >
+      Searches about +40% on top of therapy's normal January rise. Booking CVR about -10%.
+      Availability also tightens because therapy slots don't grow, so bookings rise much less
+      than searches. Exact sizes are in evals/effect_sizes.csv.
+    deciding_evidence: >
+      Compare against last January's seasonal lift in NYC therapy and against other markets'
+      therapy this January, to separate the season from the campaign. CVR drops only in NYC therapy.
+    correct_conclusion: >
+      The campaign added some bookings but far fewer than its traffic suggests: the extra
+      patients book less often and therapy supply is tight. Part of January's growth is normal
+      seasonality and should not be credited to the campaign.
+    wrong_answers:
+      - All January growth came from the campaign
+      - The CVR drop is a product problem
+
+  - id: android_release_decoy
+    kind: decoy
+    category: no_effect
+    difficulty: trap
+    window: {start: 2025-11-18, end: 2025-11-18}
+    scope: {market: all, specialty: all, platform: [Android]}
+    effect: {type: none}
+    change_log: {event_type: app_release, description: "Android app 5.2 (bug fixes, new settings screen)"}
+    correct_conclusion: No measurable effect. Nothing should be attributed to this release.
+    wrong_answers:
+      - Any metric movement blamed on the Android 5.2 release
+
+  - id: small_cell_noise
+    kind: noise
+    category: noise
+    difficulty: trap
+    # Not planted. After sampling, the generator picks the small market x specialty x platform
+    # cell-week in the replay window with the largest natural week-over-week drop that is still
+    # inside that cell's normal variation (|z| < 2). Cell, week and z are written to
+    # evals/noise_cases.csv. Holiday weeks and cells touched by planted events are excluded.
+    window: auto
+    scope: auto
+    effect: {type: none}
+    signature: >
+      A large-looking week-over-week drop in a cell with few bookings per week.
+    deciding_evidence: >
+      The cell's normal week-to-week swing is as large as the drop; |z| < 2.
+    correct_conclusion: Not significant. Sample too small to explain.
+    wrong_answers:
+      - Any causal story for the dip
+
+  - id: severe_early_flu
+    kind: real_world
+    category: external_demand
+    difficulty: medium
+    window: {start: 2025-11-30, end: 2026-01-10}
+    scope: {market: [NYC, Atlanta], specialty: [Urgent care, Primary care], platform: all}
+    effect: {type: none}
+    signature: >
+      Real CDC flu activity peaked the week of 2025-12-21 at 13.6% of outpatient visits in
+      HHS Region 2 (NYC) and 11.3% in Georgia (Atlanta), vs 9.2% and 8.8% at last season's
+      late-January peaks. Urgent care searches peak about 6 weeks earlier than last season and
+      rise further above their early-November level (NYC 2.21x vs 1.67x; Atlanta 1.93x vs 1.65x).
+      Primary care rises moderately. Supply does not follow, so availability falls
+      (Atlanta urgent care roughly 0.85 in early November to 0.58 at the peak).
+    deciding_evidence: >
+      Timing and size match flu_activity for each market's region; the surge is larger than
+      last season's; other specialties don't show it.
+    correct_conclusion: >
+      External demand surge from an early, severe flu season. Bookings are capped by urgent care
+      supply. Opportunity: more urgent care capacity during flu peaks.
+    wrong_answers:
+      - Conversion or product problem
+      - Normal seasonality (it is larger than last year)
+
+  - id: earlier_milder_flu
+    kind: real_world
+    category: external_demand
+    difficulty: medium
+    window: {start: 2025-12-01, end: 2026-01-31}
+    scope: {market: [Houston, Chicago], specialty: [Urgent care, Primary care], platform: all}
+    effect: {type: none}
+    signature: >
+      Real flu peaked about 5-6 weeks earlier than last season but lower (Texas 8.3% vs 11.3%;
+      Illinois 4.4% vs 5.6%). Urgent care surges less above its early-November level than last
+      season (Houston 1.61x vs 1.89x; Chicago 1.80x vs 2.07x). Houston urgent care is above last
+      year in mid-December (about 1.2x) and below it in late January (about 0.84x).
+    deciding_evidence: >
+      Compare whole seasons, not single weeks; the flu curve shifted earlier and is lower.
+    correct_conclusion: >
+      The flu season came earlier and was milder. Late-January year-over-year declines are
+      timing, not market weakness.
+    wrong_answers:
+      - Houston or Chicago urgent care is declining (from late-January year-over-year)
+
+  - id: thanksgiving_2025
+    kind: expected
+    category: expected_seasonality
+    difficulty: trap
+    window: {start: 2025-11-26, end: 2025-11-30}
+    scope: {market: all, specialty: all, platform: all}
+    effect: {type: none}
+    correct_conclusion: Expected holiday dip, consistent with last year. No action.
+
+  - id: year_end_holidays_2025
+    kind: expected
+    category: expected_seasonality
+    difficulty: trap
+    window: {start: 2025-12-22, end: 2026-01-02}
+    scope: {market: all, specialty: all, platform: all}
+    effect: {type: none}
+    correct_conclusion: >
+      Expected holiday dips in searches and provider capacity, consistent with last year.
+      (The iOS tracking bug on Dec 26-27 is separate and should still be caught.)
+
+  - id: january_wellness_2026
+    kind: expected
+    category: expected_seasonality
+    difficulty: medium
+    window: {start: 2026-01-03, end: 2026-01-31}
+    scope: {market: all, specialty: [Primary care, Therapy], platform: all}
+    effect: {type: none}
+    correct_conclusion: >
+      Normal January rise in primary care and therapy (new year, new plan year), with tighter
+      availability in early January while providers return from vacation. Consistent with last year.
+
+# Rows written to data/change_log.csv (visible to agents). Planted scenarios above add their
+# own `change_log` entries; these extra rows are history with no effect.
+extra_change_log:
+  - {event_date: 2024-06-11, event_type: app_release, scope: iOS, description: "iOS app 4.8 (performance improvements)"}
+  - {event_date: 2025-05-20, event_type: app_release, scope: Android, description: "Android app 5.0 (new onboarding)"}

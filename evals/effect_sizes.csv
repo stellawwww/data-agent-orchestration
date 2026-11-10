@@ -1,0 +1,5 @@
+id,searches_change,searches_with_availability_change,profile_views_change,bookings_true_change,bookings_recorded_change,slots_offered_change,availability_rate_change,click_rate_change,booking_cvr_change
+chi_derm_supply_loss,0.0,-0.1887,-0.1887,-0.1887,-0.1886,-0.3636,-0.1887,-0.0,-0.0
+web_redesign,0.0,0.0,0.08,0.015,0.015,0.0,0.0,0.08,-0.0601
+ios_tracking_bug,0.0,0.0,0.0,0.0,-0.9,0.0,0.0,0.0,0.0
+nyc_therapy_campaign,0.4,0.2322,0.2322,0.1089,0.1089,0.0,-0.1199,0.0,-0.1

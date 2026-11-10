@@ -1,0 +1,4 @@
+market,specialty,platform,week_start,bookings,prev_week_bookings,wow,wow_sd,z,median_weekly_bookings
+Chicago,Flu shot,Android,2025-12-08,4,21,-0.81,0.684,-1.43,18.0
+Houston,Flu shot,Android,2025-12-15,6,15,-0.6,0.639,-1.196,15.0
+Phoenix,Flu shot,Android,2025-11-17,10,22,-0.545,0.87,-0.914,9.0

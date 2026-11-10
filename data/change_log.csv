@@ -1,0 +1,6 @@
+event_date,event_type,scope,description
+2024-06-11,app_release,iOS,iOS app 4.8 (performance improvements)
+2025-05-20,app_release,Android,Android app 5.0 (new onboarding)
+2025-10-14,product_launch,Web,"New search results page on web (larger provider cards, more profile links)"
+2025-11-18,app_release,Android,"Android app 5.2 (bug fixes, new settings screen)"
+2026-01-12,marketing,NYC / Therapy,"Paid social campaign for therapy, NYC"
