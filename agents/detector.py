@@ -30,7 +30,9 @@ import math
 import duckdb
 import pandas as pd
 
-from agents.db import Database
+from pathlib import Path
+
+from agents.db import DATA_DIR, Database
 
 TOP_N = 15                 # flags passed to the agents each week
 E_MIN_GAP = 0.02           # lens E: daily gap between the two booking systems worth flagging
@@ -255,9 +257,11 @@ def select_flags(s: pd.DataFrame, rule: str = FLAG_RULE) -> pd.DataFrame:
     return _one_level_per_issue(f, ["lens", "compared_with", "metric", "direction"], "r", "base_volume")
 
 
-def detect(as_of: str | dt.date, top_n: int = TOP_N, rule: str = FLAG_RULE) -> dict:
-    """Flags for the review week ending on `as_of`, ready to hand to an agent as JSON."""
-    db = Database(as_of)
+def detect(as_of: str | dt.date, top_n: int = TOP_N, rule: str = FLAG_RULE,
+           data_dir: Path = DATA_DIR) -> dict:
+    """Flags for the review week ending on `as_of`, ready to hand to an agent as JSON.
+    `data_dir` picks the world (dev by default; held-out worlds live in worlds/<name>/data)."""
+    db = Database(as_of, data_dir)
     return build_flags(scores(db), consistency(db), db.as_of, top_n, rule)
 
 

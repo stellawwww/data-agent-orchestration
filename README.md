@@ -26,15 +26,31 @@ Synthetic urgent care demand follows each market's real flu curve (weekly correl
 conda create -n dao python=3.12 && conda activate dao
 pip install -r requirements.txt
 python data_gen/fetch_flu.py   # download CDC flu data (snapshot already in data/)
-python data_gen/generate.py    # write the synthetic tables to data/
+python -m data_gen.generate    # write the dev world's tables to data/
 python data_gen/checks.py      # verify the data tells the intended story; redraw the chart
+python -m data_gen.generate --world validation   # held-out worlds in worlds/<name>/
+python -m data_gen.generate --world test
 ```
 
 The generator is deterministic (fixed seed). Every planted effect is measured against a counterfactual world with identical noise and only that effect removed, so the answer key records each effect's true size (`evals/effect_sizes.csv`).
 
+### Three worlds: train / validation / test
+
+The detector and the agents are designed while looking at the dev world, so dev scores can't be trusted on their own. Two held-out worlds keep the evaluation honest. Each has the same assumptions, calendar and real flu data as dev, but new noise and about 30 randomly injected events (random type, size, scope, timing; `data_gen/inject.py`):
+
+| World | Folder | Used for |
+|---|---|---|
+| dev | `data/`, `evals/` | Design and debugging; looked at freely |
+| validation | `worlds/validation/` | Comparing versions; aggregate scores only |
+| test | `worlds/test/` | Sealed; scored once, at the end (`FINAL_SCORING=1`) |
+
+Thresholds are picked without answers, from the false-alarm rate in quiet weeks (`evals/alert_budget.py`).
+
+The detector runs weekly, like the review it serves. On validation it catches most supply, demand and tracking events but none of the small (2–3%) or short (a few days) funnel bugs: averaged over a week they sit below normal noise. That floor is by design. Catching them is the job of daily engineering monitoring, not a weekly business review.
+
 ## Stack
 
-LangGraph · Claude API (Haiku for routing, Sonnet for judgment) · TruLens · Snowflake · Python
+LangGraph · Claude API (Haiku for routing, Sonnet for judgment) · TruLens · DuckDB · Python
 
 ## Repo layout
 
@@ -43,10 +59,10 @@ LangGraph · Claude API (Haiku for routing, Sonnet for judgment) · TruLens · S
 | `config/` | World assumptions: seasonality, flu sensitivity, market sizes |
 | `data_gen/` | Synthetic data generator and CDC download |
 | `data/` | Generated tables and the CDC snapshot |
-| `sql/` | Detector queries |
-| `agents/` | One module per graph node |
+| `worlds/` | Held-out worlds (validation, test): data and sealed answers |
+| `agents/` | Data layer, SQL detector, one module per graph node |
 | `skills/` | Instructions each agent reads |
-| `evals/` | Answer key (`scenarios.yaml`) and scoring |
+| `evals/` | Dev answer key (`scenarios.yaml`) and scoring |
 | `runs/` | Memos and exported traces from each replay |
 | `docs/` | Portfolio page |
 

@@ -1,0 +1,4 @@
+market,specialty,platform,week_start,bookings,prev_week_bookings,wow,wow_sd,z,median_weekly_bookings
+Atlanta,Therapy,Android,2025-10-13,21,31,-0.323,0.435,-0.921,27.0
+Atlanta,Therapy,Android,2026-01-19,23,33,-0.303,0.435,-0.876,27.0
+Atlanta,Therapy,Android,2025-12-15,27,32,-0.156,0.435,-0.539,27.0

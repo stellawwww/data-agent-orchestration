@@ -20,7 +20,9 @@ How it works: every quantity is first computed as an expected value, with the sa
 random shocks in both the actual and the counterfactual world. Counts (searches,
 views, bookings) are then sampled once, from the actual world only.
 
-Run:  python data_gen/generate.py
+Run:  python -m data_gen.generate                     # dev world: data/ and evals/
+      python -m data_gen.generate --world validation   # held-out worlds: worlds/<name>/
+      python -m data_gen.generate --world test         # (prints aggregates only)
 """
 from __future__ import annotations
 
@@ -380,21 +382,39 @@ def find_noise_cases(funnel: pd.DataFrame, scen: dict, top: int = 3) -> pd.DataF
               "wow", "wow_sd", "z", "median_weekly_bookings"]].round(3)
 
 
-# ---------------------------------------------------------------- main
+# ---------------------------------------------------------------- worlds
 
-def main() -> None:
-    world = yaml.safe_load((ROOT / "config/world.yaml").read_text())
-    scen = yaml.safe_load((ROOT / "evals/scenarios.yaml").read_text())
+# dev = the world we build and debug on (data/, evals/). validation and test are held-out
+# worlds: same assumptions, calendar and real flu data, but new noise and randomly injected
+# events (data_gen/inject.py). Seeds are fixed so every world is reproducible.
+WORLDS = {
+    "validation": {"seed": 71011, "inject_seed": 71012},
+    "test": {"seed": 93017, "inject_seed": 93018},
+}
+KNOWN_KINDS = ("expected", "real_world", "noise")   # same truths in every world (calendar, real flu)
+
+
+def world_dirs(name: str) -> tuple[Path, Path]:
+    """(data dir agents may read, answers dir agents never read)."""
+    if name == "dev":
+        return DATA, ROOT / "evals"
+    return ROOT / "worlds" / name / "data", ROOT / "worlds" / name / "answers"
+
+
+def build_world(world: dict, scen: dict, data_dir: Path, answers_dir: Path, verbose: bool = True) -> None:
+    """Generate one world's tables (data_dir) and its answer key (answers_dir)."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    answers_dir.mkdir(parents=True, exist_ok=True)
     W = World(world, scen)
 
     actual = W.expected()
     funnel, supply = W.sample(actual)
 
-    funnel.to_csv(DATA / "daily_funnel.csv", index=False)
-    supply.to_csv(DATA / "daily_supply.csv", index=False)
-    W.cal.to_csv(DATA / "calendar.csv", index=False)
+    funnel.to_csv(data_dir / "daily_funnel.csv", index=False)
+    supply.to_csv(data_dir / "daily_supply.csv", index=False)
+    W.cal.to_csv(data_dir / "calendar.csv", index=False)
     pd.DataFrame([{"market": m, "flu_region": v["flu_region"]} for m, v in world["markets"].items()]) \
-        .to_csv(DATA / "markets.csv", index=False)
+        .to_csv(data_dir / "markets.csv", index=False)
 
     log = [dict(e) for e in scen.get("extra_change_log", [])]
     for sc in scen["scenarios"]:
@@ -404,19 +424,59 @@ def main() -> None:
             log.append({"event_date": sc["window"]["start"], "event_type": sc["change_log"]["event_type"],
                         "scope": " / ".join(parts) if parts else "all",
                         "description": sc["change_log"]["description"]})
-    pd.DataFrame(log).sort_values("event_date").to_csv(DATA / "change_log.csv", index=False)
+    pd.DataFrame(log).sort_values("event_date").to_csv(data_dir / "change_log.csv", index=False)
 
     sizes = W.effect_sizes(actual)
-    sizes.to_csv(ROOT / "evals/effect_sizes.csv", index=False)
+    sizes.to_csv(answers_dir / "effect_sizes.csv", index=False)
 
     noise = find_noise_cases(funnel, scen)
-    noise.to_csv(ROOT / "evals/noise_cases.csv", index=False)
-    print("noise case:", noise.iloc[0].to_dict())
+    noise.to_csv(answers_dir / "noise_cases.csv", index=False)
 
     print(f"daily_funnel: {len(funnel):,} rows   daily_supply: {len(supply):,} rows")
     print(f"dates {W.dates[0].date()} -> {W.dates[-1].date()}, change_log rows: {len(log)}")
-    with pd.option_context("display.width", 200, "display.max_columns", 20):
-        print(sizes.set_index("id").T)
+    if verbose:
+        print("noise case:", noise.iloc[0].to_dict())
+        with pd.option_context("display.width", 200, "display.max_columns", 20):
+            print(sizes.set_index("id").T)
+
+
+def build_heldout(name: str) -> None:
+    """A held-out world: random injected events plus the known traps from dev."""
+    import shutil
+    from data_gen.inject import random_scenarios, summarize
+
+    world = yaml.safe_load((ROOT / "config/world.yaml").read_text())
+    dev = yaml.safe_load((ROOT / "evals/scenarios.yaml").read_text())
+    world["seed"] = WORLDS[name]["seed"]
+    known = [{k: v for k, v in s.items() if k != "signature"} for s in dev["scenarios"] if s["kind"] in KNOWN_KINDS]
+    injected = random_scenarios(WORLDS[name]["inject_seed"], world, dev["replay_window"])
+    scen = {"replay_window": dev["replay_window"], "scenarios": injected + known,
+            "extra_change_log": dev.get("extra_change_log", [])}
+
+    data_dir, answers_dir = world_dirs(name)
+    data_dir.mkdir(parents=True, exist_ok=True)
+    for f in ["flu_activity.csv", "DATA_DICTIONARY.md"]:          # real flu data and table docs are shared
+        shutil.copy(DATA / f, data_dir / f)
+    answers_dir.mkdir(parents=True, exist_ok=True)
+    (answers_dir / "scenarios.yaml").write_text(
+        f"# {name} world: injected events (data_gen/inject.py) + known traps copied from dev.\n"
+        f"# Generated; do not edit. Agents never read this file.\n" + yaml.safe_dump(scen, sort_keys=False))
+
+    build_world(world, scen, data_dir, answers_dir, verbose=False)   # held-out: aggregates only, never events
+    print(summarize(injected))
+
+
+def main() -> None:
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--world", default="dev", choices=["dev", *WORLDS])
+    name = ap.parse_args().world
+    if name == "dev":
+        world = yaml.safe_load((ROOT / "config/world.yaml").read_text())
+        scen = yaml.safe_load((ROOT / "evals/scenarios.yaml").read_text())
+        build_world(world, scen, *world_dirs("dev"))
+    else:
+        build_heldout(name)
 
 
 if __name__ == "__main__":

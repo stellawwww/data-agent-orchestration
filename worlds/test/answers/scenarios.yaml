@@ -1,0 +1,731 @@
+# test world: injected events (data_gen/inject.py) + known traps copied from dev.
+# Generated; do not edit. Agents never read this file.
+replay_window:
+  start: 2025-10-06
+  end: 2026-02-01
+scenarios:
+- id: inj_01_supply_small_loss
+  kind: planted
+  category: supply
+  label: supply_small_loss
+  window:
+    start: 2025-10-16
+    end: null
+  scope:
+    market:
+    - Chicago
+    specialty: all
+    platform: all
+  effect:
+    type: supply
+    providers: 0.9138727899620026
+- id: inj_02_supply_big_churn
+  kind: planted
+  category: supply
+  label: supply_big_churn
+  window:
+    start: 2025-11-23
+    end: null
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Dentist
+    platform: all
+  effect:
+    type: supply
+    providers: 0.824505740227111
+- id: inj_03_supply_small_loss
+  kind: planted
+  category: supply
+  label: supply_small_loss
+  window:
+    start: 2025-12-19
+    end: null
+  scope:
+    market:
+    - Phoenix
+    specialty: all
+    platform: all
+  effect:
+    type: supply
+    providers: 0.9156216946346519
+- id: inj_04_app_big_bug
+  kind: planted
+  category: product_change
+  label: app_big_bug
+  window:
+    start: 2025-11-05
+    end: 2025-11-07
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Primary care
+    platform:
+    - Android
+  effect:
+    type: funnel
+    click_rate: 0.8879915554009724
+  change_log:
+    event_type: app_release
+    description: Android app 6.8 (UI changes)
+- id: inj_05_campaign
+  kind: planted
+  category: traffic_quality
+  label: campaign
+  window:
+    start: 2025-11-11
+    end: 2025-12-09
+  scope:
+    market:
+    - Houston
+    specialty:
+    - Primary care
+    platform: all
+  effect:
+    type: demand
+    searches: 1.2219588748587666
+    booking_cvr: 0.9139559084523332
+  change_log:
+    event_type: marketing
+    description: Paid campaign (Houston / Primary care)
+- id: inj_06_campaign
+  kind: planted
+  category: traffic_quality
+  label: campaign
+  window:
+    start: 2026-01-04
+    end: 2026-01-23
+  scope:
+    market:
+    - Houston
+    specialty: all
+    platform: all
+  effect:
+    type: demand
+    searches: 1.4585063727720002
+    booking_cvr: 0.9694488400490944
+  change_log:
+    event_type: marketing
+    description: Paid campaign (Houston)
+- id: inj_07_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-10-06
+    end: 2025-11-02
+  scope:
+    market:
+    - Phoenix
+    specialty:
+    - Dentist
+    platform: all
+  effect:
+    type: supply
+    providers: 0.778952401623786
+- id: inj_08_app_big_bug
+  kind: planted
+  category: product_change
+  label: app_big_bug
+  window:
+    start: 2026-01-14
+    end: 2026-01-15
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Primary care
+    platform:
+    - iOS
+  effect:
+    type: funnel
+    click_rate: 0.8854569005826008
+  change_log:
+    event_type: app_release
+    description: iOS app 7.2 (UI changes)
+- id: inj_09_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-12-11
+    end: 2025-12-28
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Flu shot
+    platform: all
+  effect:
+    type: supply
+    providers: 0.7195298406018809
+- id: inj_10_tracking_bug
+  kind: planted
+  category: instrumentation
+  label: tracking_bug
+  window:
+    start: 2026-01-24
+    end: 2026-01-26
+  scope:
+    market:
+    - Atlanta
+    specialty: all
+    platform:
+    - Web
+  effect:
+    type: tracking
+    recorded_bookings: 0.2879091544254806
+- id: inj_11_app_small_bug
+  kind: planted
+  category: product_change
+  label: app_small_bug
+  window:
+    start: 2025-11-30
+    end: 2025-12-15
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Primary care
+    platform:
+    - Android
+  effect:
+    type: funnel
+    click_rate: 1.029857097837036
+    booking_cvr: 0.970142902162964
+- id: inj_12_campaign
+  kind: planted
+  category: traffic_quality
+  label: campaign
+  window:
+    start: 2025-10-19
+    end: 2025-11-05
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Dermatology
+    platform: all
+  effect:
+    type: demand
+    searches: 1.235365252264041
+    booking_cvr: 0.8537453670082601
+  change_log:
+    event_type: marketing
+    description: Paid campaign (NYC / Dermatology)
+- id: inj_13_campaign
+  kind: planted
+  category: traffic_quality
+  label: campaign
+  window:
+    start: 2025-10-19
+    end: 2025-11-14
+  scope:
+    market:
+    - Phoenix
+    specialty:
+    - Urgent care
+    platform: all
+  effect:
+    type: demand
+    searches: 1.402083518348187
+    booking_cvr: 0.9329419412634073
+  change_log:
+    event_type: marketing
+    description: Paid campaign (Phoenix / Urgent care)
+- id: inj_14_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-12-08
+    end: 2025-12-28
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Therapy
+    platform: all
+  effect:
+    type: supply
+    providers: 0.7631731432558232
+- id: inj_15_app_big_bug
+  kind: planted
+  category: product_change
+  label: app_big_bug
+  window:
+    start: 2025-10-31
+    end: 2025-11-06
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Therapy
+    platform:
+    - Android
+  effect:
+    type: funnel
+    booking_cvr: 0.8812654426360669
+  change_log:
+    event_type: app_release
+    description: Android app 6.9 (UI changes)
+- id: inj_16_app_big_bug
+  kind: planted
+  category: product_change
+  label: app_big_bug
+  window:
+    start: 2025-12-11
+    end: 2025-12-13
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Primary care
+    platform:
+    - Web
+  effect:
+    type: funnel
+    click_rate: 0.841453016153054
+  change_log:
+    event_type: product_launch
+    description: Search and profile page update (NYC / Primary care / Web)
+- id: inj_17_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-12-17
+    end: 2026-01-13
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Flu shot
+    platform: all
+  effect:
+    type: supply
+    providers: 0.6574055905684062
+- id: inj_18_campaign
+  kind: planted
+  category: traffic_quality
+  label: campaign
+  window:
+    start: 2025-11-04
+    end: 2025-11-20
+  scope:
+    market:
+    - Houston
+    specialty:
+    - Urgent care
+    platform: all
+  effect:
+    type: demand
+    searches: 1.3974600057032718
+    booking_cvr: 0.9535291095976304
+  change_log:
+    event_type: marketing
+    description: Paid campaign (Houston / Urgent care)
+- id: inj_19_tracking_bug
+  kind: planted
+  category: instrumentation
+  label: tracking_bug
+  window:
+    start: 2026-01-11
+    end: 2026-01-13
+  scope:
+    market:
+    - Atlanta
+    specialty: all
+    platform:
+    - Android
+  effect:
+    type: tracking
+    recorded_bookings: 0.5037615864100088
+- id: inj_20_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-11-05
+    end: 2025-11-29
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Urgent care
+    platform: all
+  effect:
+    type: supply
+    providers: 0.7370216703806424
+- id: inj_21_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-10-12
+    end: 2025-11-12
+  scope:
+    market:
+    - Phoenix
+    specialty:
+    - Dermatology
+    platform: all
+  effect:
+    type: supply
+    providers: 0.52336592416427
+- id: inj_22_supply_big_churn
+  kind: planted
+  category: supply
+  label: supply_big_churn
+  window:
+    start: 2025-11-17
+    end: null
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Dermatology
+    platform: all
+  effect:
+    type: supply
+    providers: 0.8001764733954199
+- id: inj_23_tracking_bug
+  kind: planted
+  category: instrumentation
+  label: tracking_bug
+  window:
+    start: 2025-12-01
+    end: 2025-12-01
+  scope:
+    market:
+    - Phoenix
+    specialty: all
+    platform:
+    - iOS
+  effect:
+    type: tracking
+    recorded_bookings: 0.05041089713385709
+- id: inj_24_app_small_bug
+  kind: planted
+  category: product_change
+  label: app_small_bug
+  window:
+    start: 2025-12-24
+    end: 2025-12-26
+  scope:
+    market:
+    - Houston
+    specialty:
+    - Flu shot
+    platform:
+    - Android
+  effect:
+    type: funnel
+    booking_cvr: 0.9714478689035371
+- id: inj_25_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-12-26
+    end: 2026-01-29
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Therapy
+    platform: all
+  effect:
+    type: supply
+    providers: 0.8278050254156955
+- id: inj_26_tracking_bug
+  kind: planted
+  category: instrumentation
+  label: tracking_bug
+  window:
+    start: 2025-10-10
+    end: 2025-10-12
+  scope:
+    market:
+    - Atlanta
+    specialty: all
+    platform:
+    - iOS
+  effect:
+    type: tracking
+    recorded_bookings: 0.4583113678860139
+- id: inj_27_app_small_bug
+  kind: planted
+  category: product_change
+  label: app_small_bug
+  window:
+    start: 2025-12-05
+    end: 2025-12-16
+  scope:
+    market:
+    - NYC
+    specialty:
+    - Therapy
+    platform:
+    - Web
+  effect:
+    type: funnel
+    click_rate: 0.9789611046248423
+  change_log:
+    event_type: product_launch
+    description: Search and profile page update (NYC / Therapy / Web)
+- id: inj_28_app_small_bug
+  kind: planted
+  category: product_change
+  label: app_small_bug
+  window:
+    start: 2025-11-16
+    end: 2025-12-06
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Dermatology
+    platform:
+    - Web
+  effect:
+    type: funnel
+    click_rate: 0.9751582783979006
+- id: inj_29_app_small_bug
+  kind: planted
+  category: product_change
+  label: app_small_bug
+  window:
+    start: 2025-10-29
+    end: 2025-11-04
+  scope:
+    market:
+    - Atlanta
+    specialty:
+    - Flu shot
+    platform:
+    - Web
+  effect:
+    type: funnel
+    click_rate: 0.9703965178964719
+  change_log:
+    event_type: product_launch
+    description: Search and profile page update (Atlanta / Flu shot / Web)
+- id: inj_30_supply_big_paused
+  kind: planted
+  category: supply
+  label: supply_big_paused
+  window:
+    start: 2025-10-28
+    end: 2025-11-13
+  scope:
+    market:
+    - Houston
+    specialty:
+    - Dermatology
+    platform: all
+  effect:
+    type: supply
+    providers: 0.5071723301018501
+- id: decoy_1
+  kind: decoy
+  category: no_effect
+  label: decoy
+  window:
+    start: &id001 2025-10-13
+    end: *id001
+  scope:
+    market: all
+    specialty: all
+    platform:
+    - Web
+  effect:
+    type: none
+  change_log:
+    event_type: app_release
+    description: Web app 5.0 (bug fixes)
+- id: decoy_2
+  kind: decoy
+  category: no_effect
+  label: decoy
+  window:
+    start: &id002 2025-11-11
+    end: *id002
+  scope:
+    market: all
+    specialty: all
+    platform:
+    - Android
+  effect:
+    type: none
+  change_log:
+    event_type: app_release
+    description: Android app 5.1 (bug fixes)
+- id: decoy_3
+  kind: decoy
+  category: no_effect
+  label: decoy
+  window:
+    start: &id003 2025-10-25
+    end: *id003
+  scope:
+    market: all
+    specialty: all
+    platform:
+    - iOS
+  effect:
+    type: none
+  change_log:
+    event_type: app_release
+    description: iOS app 5.3 (bug fixes)
+- id: decoy_4
+  kind: decoy
+  category: no_effect
+  label: decoy
+  window:
+    start: &id004 2026-01-03
+    end: *id004
+  scope:
+    market: all
+    specialty: all
+    platform:
+    - iOS
+  effect:
+    type: none
+  change_log:
+    event_type: app_release
+    description: iOS app 5.7 (bug fixes)
+- id: small_cell_noise
+  kind: noise
+  category: noise
+  difficulty: trap
+  window: auto
+  scope: auto
+  effect:
+    type: none
+  deciding_evidence: 'The cell''s normal week-to-week swing is as large as the drop;
+    |z| < 2.
+
+    '
+  correct_conclusion: Not significant. Sample too small to explain.
+  wrong_answers:
+  - Any causal story for the dip
+- id: severe_early_flu
+  kind: real_world
+  category: external_demand
+  difficulty: medium
+  window:
+    start: 2025-11-30
+    end: 2026-01-10
+  scope:
+    market:
+    - NYC
+    - Atlanta
+    specialty:
+    - Urgent care
+    - Primary care
+    platform: all
+  effect:
+    type: none
+  deciding_evidence: 'Timing and size match flu_activity for each market''s region;
+    the surge is larger than last season''s; other specialties don''t show it.
+
+    '
+  correct_conclusion: 'External demand surge from an early, severe flu season. Bookings
+    are capped by urgent care supply. Opportunity: more urgent care capacity during
+    flu peaks.
+
+    '
+  wrong_answers:
+  - Conversion or product problem
+  - Normal seasonality (it is larger than last year)
+- id: earlier_milder_flu
+  kind: real_world
+  category: external_demand
+  difficulty: medium
+  window:
+    start: 2025-12-01
+    end: 2026-02-01
+  scope:
+    market:
+    - Houston
+    - Chicago
+    specialty:
+    - Urgent care
+    - Primary care
+    platform: all
+  effect:
+    type: none
+  deciding_evidence: 'Compare whole seasons, not single weeks; the flu curve shifted
+    earlier and is lower.
+
+    '
+  correct_conclusion: 'The flu season came earlier and was milder. Late-January year-over-year
+    declines are timing, not market weakness.
+
+    '
+  wrong_answers:
+  - Houston or Chicago urgent care is declining (from late-January year-over-year)
+- id: thanksgiving_2025
+  kind: expected
+  category: expected_seasonality
+  difficulty: trap
+  window:
+    start: 2025-11-26
+    end: 2025-11-30
+  scope:
+    market: all
+    specialty: all
+    platform: all
+  effect:
+    type: none
+  correct_conclusion: Expected holiday dip, consistent with last year. No action.
+- id: year_end_holidays_2025
+  kind: expected
+  category: expected_seasonality
+  difficulty: trap
+  window:
+    start: 2025-12-22
+    end: 2026-01-02
+  scope:
+    market: all
+    specialty: all
+    platform: all
+  effect:
+    type: none
+  correct_conclusion: 'Expected holiday dips in searches and provider capacity, consistent
+    with last year. (The iOS tracking bug on Dec 26-27 is separate and should still
+    be caught.)
+
+    '
+- id: january_wellness_2026
+  kind: expected
+  category: expected_seasonality
+  difficulty: medium
+  window:
+    start: 2026-01-03
+    end: 2026-02-01
+  scope:
+    market: all
+    specialty:
+    - Primary care
+    - Therapy
+    platform: all
+  effect:
+    type: none
+  correct_conclusion: 'Normal January rise in primary care and therapy (new year,
+    new plan year), with tighter availability in early January while providers return
+    from vacation. Consistent with last year.
+
+    '
+extra_change_log:
+- event_date: 2024-06-11
+  event_type: app_release
+  scope: iOS
+  description: iOS app 4.8 (performance improvements)
+- event_date: 2025-05-20
+  event_type: app_release
+  scope: Android
+  description: Android app 5.0 (new onboarding)
